@@ -1,0 +1,29 @@
+﻿@model List<Finance.Models.EF.Portfolio>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Portfölj</h2>
+
+
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Aktie</th>
+            <th>Köpdatum</th>
+            <th>Köpantal</th>
+            <th>Pris</th>
+            <th>Belopp</th>
+        </tr>
+        @foreach (var item in @Model) {
+            <tr>
+                <td>@item.Stock</td>
+                <td>@item.BuyDate.ToShortDateString()</td>
+                <td>@Math.Round(item.BuyNumber) st</td>
+                <td>@item.BuyPrice kr</td>
+                <td>@item.BuyAmount kr</td>
+            </tr>
+        }
+        
+    </table>
+
+

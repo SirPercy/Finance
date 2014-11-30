@@ -1,0 +1,71 @@
+﻿@model  Finance.Models.ViewModels.InsiderListViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Insiderlistan</h2>
+<ul class="nav nav-tabs">
+  <li role="presentation" class='@(Request.QueryString["show"] != "date" ? "active" : "nonactive")'><a href="?show=quote">Aktie</a></li>
+  <li role="presentation" class='@(Request.QueryString["show"] == "date" ? "active" : "nonactive")'><a href="?show=date">Datum</a></li>
+</ul>
+@if (@Request.QueryString["show"] != "date") {
+
+    foreach (var quote in @Model.InsiderListByQuote) {
+
+    <h3>@quote.Company</h3>
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Datum</th>
+            <th>Person</th>
+            <th>Position</th>
+            <th>Transaktion</th>
+            <th>Typ</th>
+            <th>Antal</th>
+            <th>Belopp</th>
+        </tr>
+        @foreach (var item in @quote.InsiderInfoList.OrderByDescending(i => i.Date)) {
+            <tr>
+                <td>@item.Date.ToShortDateString()</td>
+                <td>@item.Person</td>
+                <td>@item.Position</td>
+                <td>@item.Transaction</td>
+                <td>@item.Type</td>
+                <td class="right">@item.Number st</td>
+                <td class="right">@item.Amount kr</td>
+            </tr>
+        }
+        
+    </table>
+
+    }
+}
+else if(@Request.QueryString["show"] == "date") {
+       <table class="table table-condensed table-striped">
+        <tr>
+            <th>Datum</th>
+            <th>Aktie</th>
+            <th>Person</th>
+            <th>Position</th>
+            <th>Transaktion</th>
+            <th>Typ</th>
+            <th>Antal</th>
+            <th>Belopp</th>
+        </tr>
+        @foreach (var item in @Model.InsiderListByDate.OrderByDescending(i => i.Date)) {
+            <tr>
+                <td>@item.Date.ToShortDateString()</td>
+                <td>@item.CompanyName</td>
+                <td>@item.Person</td>
+                <td>@item.Position</td>
+                <td>@item.Transaction</td>
+                <td>@item.Type</td>
+                <td class="right">@item.Number st</td>
+                <td class="right">@item.Amount kr</td>
+            </tr>
+        }
+        
+    </table>
+
+}
+
+
