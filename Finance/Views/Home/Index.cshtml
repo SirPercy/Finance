@@ -1,4 +1,4 @@
-﻿@model List<Finance.Models.EF.Portfolio>
+﻿@model Finance.Models.ViewModels.HomeViewModel
 @{
     ViewBag.Title = "Index";
 }
@@ -10,20 +10,52 @@
         <tr>
             <th>Aktie</th>
             <th>Köpdatum</th>
-            <th>Köpantal</th>
-            <th>Pris</th>
-            <th>Belopp</th>
+            <th class="right">Köpantal</th>
+            <th class="right">Pris</th>
+            <th class="right">Belopp</th>
+            <th class="right">Aktuell kurs</th>
+            <th class="right">Avkastning</th>
         </tr>
-        @foreach (var item in @Model) {
+        @foreach (var item in @Model.Portfolio) {
             <tr>
                 <td>@item.Stock</td>
                 <td>@item.BuyDate.ToShortDateString()</td>
-                <td>@Math.Round(item.BuyNumber) st</td>
-                <td>@item.BuyPrice kr</td>
-                <td>@item.BuyAmount kr</td>
+                <td class="right">@Math.Round(item.BuyNumber) st</td>
+                <td class="right">@Math.Round(item.BuyPrice) kr</td>
+                <td class="right">@Math.Round(item.BuyAmount) kr</td>
+                <td class="right">@item.CurrentPrice kr</td>
+                <td class="right">@String.Format("{0:P2}.", ((@item.CurrentPrice * @item.BuyNumber)  - (@item.BuyPrice*@item.BuyNumber)) /10000)</td>
             </tr>
         }
         
     </table>
+
+
+    <h2>Transaktioner</h2>
+    
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Datum</th>
+            <th>Transaktion</th>
+            <th>Aktie</th>
+            <th class="right">Antal</th>
+            <th class="right">Pris</th>
+            <th class="right">Belopp</th>
+            <th class="right">Resultat</th>
+        </tr>
+        @foreach (var item in @Model.Transactions) {
+            <tr>
+                <td>@item.Date.ToShortDateString()</td>
+                <td>@item.TransactionType</td>
+                <td>@item.Stock</td>
+                <td class="right">@Math.Round(item.Number) st</td>
+                <td class="right">@Math.Round(item.Price) kr</td>
+                <td class="right">@Math.Round(item.Amount) kr</td>
+                <td class="right">@Math.Round(item.Result) kr</td>
+            </tr>
+        }
+        
+    </table>
+
 
 

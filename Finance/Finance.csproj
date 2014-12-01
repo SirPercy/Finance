@@ -137,6 +137,7 @@
     <Compile Include="Core\Jobs\FindAndStoreActionJob.cs" />
     <Compile Include="Core\Jobs\ImportTickerJob.cs" />
     <Compile Include="Core\Jobs\StoreInsiderInfoJob.cs" />
+    <Compile Include="Core\Jobs\UpdatePortfolioJob.cs" />
     <Compile Include="Core\Utilities\DiscMananger.cs" />
     <Compile Include="Core\Utilities\HtmlResolver.cs" />
     <Compile Include="Core\Utilities\InsiderService.cs" />

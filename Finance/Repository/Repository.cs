@@ -66,7 +66,7 @@ namespace Finance.Repository
             foreach (var quote in quotes)
             {
                 var lastBuysAndSells =
-                    quote.InsiderInfoList.Where(i => i.Date > forDate.AddMonths(-observableMonths)).ToList();
+                    quote.InsiderInfoList.Where(i => i.Date > forDate.AddMonths(-observableMonths) && i.Date <= forDate).ToList();
                 var personDict = new Dictionary<string, int>();
                 foreach (var lastBuysAndSell in lastBuysAndSells)
                 {
@@ -89,7 +89,7 @@ namespace Finance.Repository
                 var noOfBuys = personDict.Count(i => i.Value > 0);
                 var noOfSells = personDict.Count(i => i.Value < 0);
                 //if last three is sell increase sell to trigger
-                if(lastBuysAndSells[lastBuysAndSells.Count - 1].Transaction.Equals("Försäljning") &&
+                if(lastBuysAndSells.Count > 2 && lastBuysAndSells[lastBuysAndSells.Count - 1].Transaction.Equals("Försäljning") &&
                    lastBuysAndSells[lastBuysAndSells.Count - 2].Transaction.Equals("Försäljning") &&
                    lastBuysAndSells[lastBuysAndSells.Count - 3].Transaction.Equals("Försäljning"))
                 {
@@ -106,22 +106,24 @@ namespace Finance.Repository
             return Context.Portfolio.ToList();
         }
 
-        public List<Quote> GetTransactions()
+        public List<Transaction> GetTransactions()
         {
-            return Context.Quote.Include("TransactionList").ToList();
-   
+            return Context.Transactions.ToList();
         }
-        public void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount)
+        public void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount, double result)
         {
             var transaction = new Transaction
                                   {
+                                      Date = date,
                                       Stock = stock,
                                       TransactionType = transactionType,
                                       Number = number,
                                       Price = price,
-                                      Amount = amount
+                                      Amount = amount,
+                                      Result = result
                                   };
             Context.Transactions.Add(transaction);
+            Context.SaveChanges();
         }
 
         public List<Ticker> GetTickers() {
@@ -131,6 +133,7 @@ namespace Finance.Repository
         public void AddPostToPortfolio(Portfolio entity)
         {
             Context.Portfolio.Add(entity);
+            Context.SaveChanges();
         }
         public List<Quote> GetInsiderList()
         {

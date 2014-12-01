@@ -15,10 +15,10 @@ namespace Finance.Repository
                                                                       DateTime forDate);
 
             List<Portfolio> GetPortfolio();
-            List<Quote> GetTransactions();
+            List<Transaction> GetTransactions();
             List<Ticker> GetTickers();
             void AddPostToPortfolio(Portfolio entity);
-            void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount);
+            void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount, double result);
         }
     
 }

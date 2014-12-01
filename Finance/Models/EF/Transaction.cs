@@ -15,5 +15,6 @@ namespace Finance.Models.EF
         public double Number{ get; set; }
         public double Price { get; set; }
         public double Amount { get; set; }
+        public double Result { get; set; }
      }
 }

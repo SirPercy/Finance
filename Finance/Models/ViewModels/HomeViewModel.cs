@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Finance.Models.EF;
 
 namespace Finance.Models.ViewModels
 {
     public class HomeViewModel
     {
-        public List<Finance.Models.EF.Quote> Quotes { get; set; }
-        public Dictionary<string, Tuple<int, int>> Result { get; set; }
+        public List<Portfolio> Portfolio { get; set; }
+        public List<Transaction> Transactions { get; set; }
     }
 }

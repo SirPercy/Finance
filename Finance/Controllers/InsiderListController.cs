@@ -28,8 +28,8 @@ namespace Finance.Controllers
                 list = _repository.GetInsiderList();
                 HttpContext.Cache.Insert("insider", list, null, DateTime.Now.AddSeconds(4), TimeSpan.Zero);
             }
-            var listByDate = new List<InsiderInfo>();
-            if (Request.QueryString["show"] == "date")
+                var listByDate = new List<InsiderInfo>();
+                if (Request.QueryString["show"] == "date")
             {
                 foreach (var insiderInfo in list)
                 {

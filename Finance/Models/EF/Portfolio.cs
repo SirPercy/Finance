@@ -15,9 +15,6 @@ namespace Finance.Models.EF
         public double BuyNumber{ get; set; }
         public double BuyPrice { get; set; }
         public double BuyAmount { get; set; }
-        public DateTime SellDate { get; set; }
-        public double SellPrice { get; set; }
-        public double SellAmount { get; set; }
-        public double Result { get; set; }
+        public double CurrentPrice { get; set; }
     }
 }

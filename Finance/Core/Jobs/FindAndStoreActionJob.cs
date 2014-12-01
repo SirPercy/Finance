@@ -4,39 +4,32 @@ using System.Data.SqlTypes;
 using System.Linq;
 using Finance.Core.Utilities;
 using Finance.Models.EF;
+using Quartz;
 
 namespace Finance.Core.Jobs
 {
-    public class FindAndStoreActionJob
+    public class FindAndStoreActionJob : IJob
     {
         private const int DistinctByers = 4;
         private const int DistinctSelles = 3;
         private const double ObservableAmount = 30000;
         private const int ObservableMonths = 2;
 
-        public IEnumerable<Portfolio> Execute()
-        {            
-            
-            var portfolioItems = new List<Portfolio>();
-            for (var x = 1; x < 31; x++)
-            {
-                var date = new DateTime(2014, 10, x);
+        public void Execute(IJobExecutionContext context) {
+
+            for (var x = 1; x < 30; x++) {
+                var date = new DateTime(2014, 11, x);
                 var buyOrSellInfo = FindStocksToBuyOrSell(date).Where(i => i.Value.Item1 >= DistinctByers || i.Value.Item2 >= DistinctSelles).ToDictionary(i => i.Key, i => i.Value);
-                //UpdatePortfolio(buyOrSellInfo, date);
-                GetPortfolio(buyOrSellInfo, date, portfolioItems);
-                
+                UpdatePortfolio(buyOrSellInfo, date);
             }
-            return portfolioItems;
         }
-        private static Dictionary<string, Tuple<int, int>> FindStocksToBuyOrSell(DateTime forDate)
-        {
+        private static Dictionary<string, Tuple<int, int>> FindStocksToBuyOrSell(DateTime forDate) {
             var repository = new Repository.Repository();
             return repository.FindStocksToBuyOrSell(ObservableMonths, ObservableAmount, forDate);
         }
-    
+
         private static void UpdatePortfolio(Dictionary<string, Tuple<int, int>> buyOrSellInfo, DateTime forDate) {
-            foreach (var item in buyOrSellInfo)
-            {
+            foreach (var item in buyOrSellInfo) {
                 var stock = item.Key;
                 var isBuy = (item.Value.Item1 - item.Value.Item2) >= DistinctByers;
                 var isSell = (item.Value.Item2 - item.Value.Item1) >= DistinctSelles;
@@ -51,78 +44,74 @@ namespace Finance.Core.Jobs
                 if (price.Last == null)
                     continue;
 
-                var addBuyToPortfolio = stockEntity == null && isBuy;
+                var addBuyToPortfolio = (stockEntity == null && isBuy);
                 var addSellToPortfolio = stockEntity != null && isSell && !isBuy;
-                var number = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
-                var calcPrice = 10000/Double.Parse(price.Last,
+                var calcPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
+                var number = 10000 / Double.Parse(price.Last,
                                                    System.Globalization.CultureInfo.
                                                        InvariantCulture);
-                repository.StoreTransaction(stock, forDate, addBuyToPortfolio ? "Köp" : "Försäljning", number, calcPrice, 10000);
-                
 
                 if (addBuyToPortfolio)
                 {
+                    repository.StoreTransaction(stock, forDate, "Köp", number, calcPrice, 10000, 0);
                     repository.AddPostToPortfolio(new Portfolio
-                                          {
-                                              Stock = stock,
-                                              BuyPrice = calcPrice,
-                                              BuyAmount = 10000,
-                                              BuyNumber = number,
-                                              BuyDate = forDate,
-                                              SellDate = (DateTime) SqlDateTime.MinValue
-                                          }
+                                                      {
+                                                          Stock = stock,
+                                                          BuyPrice = calcPrice,
+                                                          BuyAmount = 10000,
+                                                          BuyNumber = number,
+                                                          BuyDate = forDate,
+                                                      }
                         );
-
                 }
-                else if (addSellToPortfolio)
-                {
-                    var parsedPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
-                    var sellAmount = parsedPrice*stockEntity.BuyNumber;
-                    var result = (sellAmount - stockEntity.BuyAmount)/stockEntity.BuyAmount;
-                    stockEntity.SellDate = forDate;
-                    stockEntity.SellPrice = parsedPrice;
-                    stockEntity.SellAmount = sellAmount;
-                    stockEntity.Result = result;
-                    repository.SaveChanges();
+                else if (addSellToPortfolio) {
+                    if (forDate > stockEntity.BuyDate)
+                    {
+                        repository.Context.Portfolio.Remove(stockEntity);
+                        repository.SaveChanges();
+                        repository.StoreTransaction(stock, forDate, "Försäljning", stockEntity.BuyNumber, calcPrice,
+                                                    (calcPrice*stockEntity.BuyNumber),
+                                                    (calcPrice*stockEntity.BuyNumber) - 10000);
+                    }
                 }
             }
         }
 
-       public IEnumerable<Portfolio> GetPortfolio(Dictionary<string, Tuple<int, int>> buyOrSellInfo, DateTime forDate, List<Portfolio> portfolioItems) {
-           using (var ctx = new Context()) {
-               foreach (var item in buyOrSellInfo) {
-                   var stock = item.Key;
-                   var isBuy = (item.Value.Item1 - item.Value.Item2) >= DistinctByers;
+        //public IEnumerable<Portfolio> GetPortfolio(Dictionary<string, Tuple<int, int>> buyOrSellInfo, DateTime forDate, List<Portfolio> portfolioItems) {
+        //    using (var ctx = new Context()) {
+        //        foreach (var item in buyOrSellInfo) {
+        //            var stock = item.Key;
+        //            var isBuy = (item.Value.Item1 - item.Value.Item2) >= DistinctByers;
 
-                   var isInList = portfolioItems.Any(i => i.Stock.EndsWith(stock));
-                   var ticker = ctx.TickerList.FirstOrDefault(t => t.FullName.Equals(stock));
-                   //post in not one of the stocks in list to follow
-                   if (ticker == null)
-                       continue;
-                   var price = QuoteService.GetPrice(ticker.TickerName, forDate);
-                   if (price.Last == null)
-                       continue;
-                   if (!isInList && isBuy) {
-                       portfolioItems.Add(new Portfolio
-                       {
-                           Stock = stock,
-                           BuyPrice =
-                               Double.Parse(price.Last,
-                                            System.Globalization.CultureInfo.InvariantCulture),
-                           BuyAmount = 10000,
-                           BuyNumber = 10000 / Double.Parse(price.Last,
-                                                          System.Globalization.CultureInfo.
-                                                              InvariantCulture),
-                           BuyDate = forDate,
-                           SellDate = (DateTime)SqlDateTime.MinValue
-                       }
-                           );
+        //            var isInList = portfolioItems.Any(i => i.Stock.EndsWith(stock));
+        //            var ticker = ctx.TickerList.FirstOrDefault(t => t.FullName.Equals(stock));
+        //            //post in not one of the stocks in list to follow
+        //            if (ticker == null)
+        //                continue;
+        //            var price = QuoteService.GetPrice(ticker.TickerName, forDate);
+        //            if (price.Last == null)
+        //                continue;
+        //            if (!isInList && isBuy) {
+        //                portfolioItems.Add(new Portfolio
+        //                {
+        //                    Stock = stock,
+        //                    BuyPrice =
+        //                        Double.Parse(price.Last,
+        //                                     System.Globalization.CultureInfo.InvariantCulture),
+        //                    BuyAmount = 10000,
+        //                    BuyNumber = 10000 / Double.Parse(price.Last,
+        //                                                   System.Globalization.CultureInfo.
+        //                                                       InvariantCulture),
+        //                    BuyDate = forDate,
+        //                    SellDate = (DateTime)SqlDateTime.MinValue
+        //                }
+        //                    );
 
-                   }
-               }
-               return portfolioItems;
-           }
-       }
- 
+        //            }
+        //        }
+        //        return portfolioItems;
+        //    }
+        //}
+
     }
 }
