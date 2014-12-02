@@ -17,6 +17,10 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -147,11 +151,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\MenuItemHelper.cs" />
-    <Compile Include="Migrations\201411181015291_InitialCreate.cs" />
-    <Compile Include="Migrations\201411181015291_InitialCreate.Designer.cs">
-      <DependentUpon>201411181015291_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\EF\Context.cs" />
     <Compile Include="Models\EF\Transaction.cs" />
     <Compile Include="Models\EF\Portfolio.cs" />
@@ -184,7 +183,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -206,11 +204,7 @@
     <None Include="Scripts\jquery-2.0.2.min.map" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\InsiderList\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201411181015291_InitialCreate.resx">
-      <DependentUpon>201411181015291_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
+    <Content Include="Views\Web.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
