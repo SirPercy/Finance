@@ -1,9 +1,9 @@
 Files/
 App_Data/
 learnmore.git/
-web.config
-web.release.config
-web.debug.config
+/Finance/web.config
+/Finance/web.release.config
+/Finance/web.debug.config
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
