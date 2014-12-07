@@ -12,8 +12,6 @@ namespace Finance.Core.Utilities
     {
         public static QuoteInfo GetPrice(string symbol, DateTime forDate)
         {
-            // Set the return string to null.
-            string result = null;
             try {
                 var webreq = (HttpWebRequest)WebRequest.Create(string.Format(Constants.YahooUrl, symbol, (forDate.Month - 1), forDate.Day, forDate.Year, (forDate.Month - 1), forDate.Day, forDate.Year));
                 var webresp = (HttpWebResponse)webreq.GetResponse();

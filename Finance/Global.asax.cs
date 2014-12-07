@@ -33,7 +33,7 @@ namespace Finance
 
         private static void TriggerScheduler()
         {
-            var job = new JobDetailImpl("StoreRoundScheduler", typeof(Core.Jobs.StoreInsiderInfoJob));
+            var job = new JobDetailImpl("StoreInsiderInfoScheduler", typeof(Core.Jobs.StoreInsiderInfoJob));
             var trigger = TriggerBuilder.Create();
             //trigger.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(1));
             trigger.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 9-10 * * ?")));
@@ -42,7 +42,7 @@ namespace Finance
             var jobTwo = new JobDetailImpl("StoreActionScheduler", typeof(Core.Jobs.FindAndStoreActionJob));
             var triggerTwo = TriggerBuilder.Create();
             //triggerTwo.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(2));
-            triggerTwo.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 9-10 * * ?")));
+            triggerTwo.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 10-11 * * ?")));
             triggerTwo.StartNow();
 
 

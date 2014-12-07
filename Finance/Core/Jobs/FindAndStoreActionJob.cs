@@ -16,12 +16,21 @@ namespace Finance.Core.Jobs
         private const int ObservableMonths = 2;
 
         public void Execute(IJobExecutionContext context) {
-
-            for (var x = 1; x < 30; x++) {
-                var date = new DateTime(2014, 11, x);
+            var portfolio = new Repository.Repository().GetPortfolio();
+            if (!portfolio.Any()) {
+                for (int i = 45; i > 0; i--)
+                {
+                    var date = DateTime.Now.AddDays(-i);
+                    var buyOrSellInfo = FindStocksToBuyOrSell(date).Where(s => s.Value.Item1 >= DistinctByers || s.Value.Item2 >= DistinctSelles).ToDictionary(item => item.Key, item => item.Value);
+                    UpdatePortfolio(buyOrSellInfo, date);   
+                }
+            }
+            else
+            {
+                var date = DateTime.Now.AddDays(-1);                 
                 var buyOrSellInfo = FindStocksToBuyOrSell(date).Where(i => i.Value.Item1 >= DistinctByers || i.Value.Item2 >= DistinctSelles).ToDictionary(i => i.Key, i => i.Value);
                 UpdatePortfolio(buyOrSellInfo, date);
-            }
+            }            
         }
         private static Dictionary<string, Tuple<int, int>> FindStocksToBuyOrSell(DateTime forDate) {
             var repository = new Repository.Repository();
