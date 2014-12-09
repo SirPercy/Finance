@@ -13,12 +13,12 @@
     foreach (var quote in @Model.InsiderListByQuote) {
 
     <h3>@quote.Company</h3>
-    <table class="table table-condensed table-striped">
+    <table class="table table-condensed table-striped table-insider">
         <tr>
             <th>Datum</th>
             <th>Person</th>
             <th>Position</th>
-            <th>Transaktion</th>
+            <th>Trans.</th>
             <th>Typ</th>
             <th>Antal</th>
             <th>Belopp</th>
@@ -28,7 +28,7 @@
                 <td>@item.Date.ToShortDateString()</td>
                 <td>@item.Person</td>
                 <td>@item.Position</td>
-                <td>@item.Transaction</td>
+                <td>@item.Transaction.Replace("Försäljning", "Förs")</td>
                 <td>@item.Type</td>
                 <td class="right">@item.Number st</td>
                 <td class="right">@item.Amount kr</td>
@@ -40,13 +40,13 @@
     }
 }
 else if(@Request.QueryString["show"] == "date") {
-       <table class="table table-condensed table-striped">
+       <table class="table table-condensed table-striped table-date-insider">
         <tr>
             <th>Datum</th>
             <th>Aktie</th>
             <th>Person</th>
             <th>Position</th>
-            <th>Transaktion</th>
+            <th>Trans.</th>
             <th>Typ</th>
             <th>Antal</th>
             <th>Belopp</th>
@@ -57,7 +57,7 @@ else if(@Request.QueryString["show"] == "date") {
                 <td>@item.CompanyName</td>
                 <td>@item.Person</td>
                 <td>@item.Position</td>
-                <td>@item.Transaction</td>
+                <td>@item.Transaction.Replace("Försäljning", "Förs")</td>
                 <td>@item.Type</td>
                 <td class="right">@item.Number st</td>
                 <td class="right">@item.Amount kr</td>

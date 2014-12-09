@@ -137,7 +137,7 @@ namespace Finance.Repository
         }
         public List<Quote> GetInsiderList()
         {
-            return Context.Quote.Include("InsiderInfoList").ToList();
+            return Context.Quote.Include("InsiderInfoList").Where(q => q.InsiderInfoList.Count > 0).OrderBy(q => q.Company).ToList();
           
         }
         public List<InsiderInfo> GetInsiderDateList() {
