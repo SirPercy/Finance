@@ -2,7 +2,7 @@
 }
 .masthead{margin-top:10px}
 .right{text-align:right}
-
+.summary{text-align:right;font-weight:bold}
 
 
 @media (max-width: 767px) { 
@@ -25,6 +25,16 @@
         display:block;
         width:70px;
         overflow:hidden;
+    }
+     .table-transaction th:nth-child(4),
+    .table-transaction td:nth-child(4),
+    .table-transaction th:nth-child(6),
+    .table-transaction td:nth-child(6),
+    .table-portfolio th:nth-child(5),
+    .table-portfolio td:nth-child(5),
+    .table-portfolio th:nth-child(3),
+    .table-portfolio td:nth-child(3){
+    display:none;
     }
     
 }

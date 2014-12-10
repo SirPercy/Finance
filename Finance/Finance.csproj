@@ -145,11 +145,13 @@
     <Compile Include="Core\Utilities\DiscMananger.cs" />
     <Compile Include="Core\Utilities\HtmlResolver.cs" />
     <Compile Include="Core\Utilities\InsiderService.cs" />
+    <Compile Include="Core\Utilities\Logger.cs" />
     <Compile Include="Core\Utilities\QuoteService.cs" />
     <Compile Include="Core\Utilities\WebRequestRetriever.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CommonHelper.cs" />
     <Compile Include="Helpers\MenuItemHelper.cs" />
     <Compile Include="Models\EF\Context.cs" />
     <Compile Include="Models\EF\Transaction.cs" />

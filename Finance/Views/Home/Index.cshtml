@@ -1,4 +1,5 @@
 ﻿@model Finance.Models.ViewModels.HomeViewModel
+@using Finance.Helpers
 @{
     ViewBag.Title = "Index";
 }
@@ -6,7 +7,7 @@
 <h2>Portfölj</h2>
 
 
-    <table class="table table-condensed table-striped">
+    <table class="table table-condensed table-striped table-portfolio">
         <tr>
             <th>Aktie</th>
             <th>Datum</th>
@@ -24,16 +25,17 @@
                 <td class="right">@Math.Round(item.BuyPrice) kr</td>
                 <td class="right">@Math.Round(item.BuyAmount) kr</td>
                 <td class="right">@item.CurrentPrice kr</td>
-                <td class="right">@String.Format("{0:P2}.", ((@item.CurrentPrice * @item.BuyNumber)  - (@item.BuyPrice*@item.BuyNumber)) /10000)</td>
+                <td class="right">@String.Format("{0:P2}.", ((@item.CurrentPrice * @item.BuyNumber)  - 10000) /10000)</td>
             </tr>
         }
+        <tr><td colspan="7" class="summary">Total avkastning: @Html.Roi(@Model.Portfolio)</td></tr>
         
     </table>
 
 
     <h2>Transaktioner</h2>
     
-    <table class="table table-condensed table-striped">
+    <table class="table table-condensed table-striped table-transaction">
         <tr>
             <th>Datum</th>
             <th>Trans.</th>
