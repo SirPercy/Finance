@@ -32,7 +32,7 @@ namespace Finance.Repository
 
         }
 
-        public void StoreInsiderInfo(IEnumerable<InsiderInfo> latestInsiderData, DateTime dateToGetData)
+        public void StoreInsiderInfo(IEnumerable<InsiderInfo> latestInsiderData)
         {
                 foreach (var insiderInfo in latestInsiderData) {
                     var info = insiderInfo;
@@ -41,7 +41,7 @@ namespace Finance.Repository
                     if (ticker == null)
                         continue;
 
-                    var price = QuoteService.GetPrice(ticker.TickerName, dateToGetData);
+                    var price = QuoteService.GetPrice(ticker.TickerName, insiderInfo.Date);
                     var number = Double.Parse(info.Number);
                     var lastPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
                     insiderInfo.Amount = (int)Math.Round(number * lastPrice);

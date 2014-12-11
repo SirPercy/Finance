@@ -16,7 +16,7 @@ namespace Finance.Core.Utilities
         public static IEnumerable<InsiderInfo> Get(DateTime date)
         {
             try {
-                var url = string.Format(Constants.FiUrl, date.ToShortDateString());
+                var url = string.Format(Constants.FiUrl, date.ToShortDateString(), DateTime.Now.ToShortDateString());
                 var retriever = new WebRequestRetriever();
                 var resolver = new HtmlResolver();
                 var result = retriever.Get(new Uri(url));

@@ -25,13 +25,10 @@ namespace Finance.Core.Jobs
             if (daysToGet < 1)
                 return;
    
-            for (var i = 1; i <= daysToGet; i++)
-            {
-                var dateToGetData = DateTime.Now.AddDays(-i);
-                var latestInsiderData = InsiderService.Get(dateToGetData);
-                _repository.StoreInsiderInfo(latestInsiderData, dateToGetData);
+            var latestInsiderData = InsiderService.Get(dateFrom);
+            _repository.StoreInsiderInfo(latestInsiderData);
                 
-            }
+            
 
         }
 
