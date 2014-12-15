@@ -18,17 +18,25 @@ namespace Finance.Core.Jobs
 
         public void Execute(IJobExecutionContext context)
         {
-            var latestPost = GetLatestInsiderPost();
-            var dateFrom = latestPost != null ? latestPost.Date.AddDays(1) : DateTime.Now.AddDays(-150);
+            try
+            {
+                var latestPost = GetLatestInsiderPost();
+                var dateFrom = latestPost != null ? latestPost.Date.AddDays(1) : DateTime.Now.AddDays(-150);
 
-            var daysToGet = (int) DateTime.Now.Subtract(dateFrom).TotalDays;
-            if (daysToGet < 1)
-                return;
-   
-            var latestInsiderData = InsiderService.Get(dateFrom);
-            _repository.StoreInsiderInfo(latestInsiderData);
-                
-            
+                var daysToGet = (int) DateTime.Now.AddDays(-1).Subtract(dateFrom).TotalDays;
+                if (daysToGet < 1)
+                    return;
+
+                var latestInsiderData = InsiderService.Get(dateFrom);
+                _repository.StoreInsiderInfo(latestInsiderData);
+                Logger.AddMessage("[OK] StoreInsiderInfoJob " + DateTime.Now);
+ 
+            }
+            catch (Exception ex) {
+                Logger.AddMessage("[ERROR] StoreInsiderInfoJob " + ex.InnerException);
+
+            }
+
 
         }
 
