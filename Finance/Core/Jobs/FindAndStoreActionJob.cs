@@ -16,21 +16,37 @@ namespace Finance.Core.Jobs
         private const int ObservableMonths = 2;
 
         public void Execute(IJobExecutionContext context) {
-            var portfolio = new Repository.Repository().GetPortfolio();
-            if (!portfolio.Any()) {
-                for (int i = 45; i > 0; i--)
-                {
-                    var date = DateTime.Now.AddDays(-i);
-                    var buyOrSellInfo = FindStocksToBuyOrSell(date).Where(s => s.Value.Item1 >= DistinctByers || s.Value.Item2 >= DistinctSelles).ToDictionary(item => item.Key, item => item.Value);
-                    UpdatePortfolio(buyOrSellInfo, date);   
-                }
-            }
-            else
+            try
             {
-                var date = DateTime.Now.AddDays(-1);                 
-                var buyOrSellInfo = FindStocksToBuyOrSell(date).Where(i => i.Value.Item1 >= DistinctByers || i.Value.Item2 >= DistinctSelles).ToDictionary(i => i.Key, i => i.Value);
-                UpdatePortfolio(buyOrSellInfo, date);
-            }            
+                var portfolio = new Repository.Repository().GetPortfolio();
+                if (!portfolio.Any())
+                {
+                    for (int i = 45; i > 0; i--)
+                    {
+                        var date = DateTime.Now.AddDays(-i);
+                        var buyOrSellInfo =
+                            FindStocksToBuyOrSell(date).Where(
+                                s => s.Value.Item1 >= DistinctByers || s.Value.Item2 >= DistinctSelles).ToDictionary(
+                                    item => item.Key, item => item.Value);
+                        UpdatePortfolio(buyOrSellInfo, date);
+                    }
+                }
+                else
+                {
+                    var date = DateTime.Now.AddDays(-1);
+                    var buyOrSellInfo =
+                        FindStocksToBuyOrSell(date).Where(
+                            i => i.Value.Item1 >= DistinctByers || i.Value.Item2 >= DistinctSelles).ToDictionary(
+                                i => i.Key, i => i.Value);
+                    UpdatePortfolio(buyOrSellInfo, date);
+                }
+                Logger.AddMessage("[OK] FindAndStoreActionJob " + DateTime.Now);
+
+            }
+            catch (Exception ex) {
+                Logger.AddMessage("[ERROR] FindAndStoreActionJob " + ex.InnerException);
+
+            }
         }
         private static Dictionary<string, Tuple<int, int>> FindStocksToBuyOrSell(DateTime forDate) {
             var repository = new Repository.Repository();

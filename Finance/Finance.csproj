@@ -145,11 +145,13 @@
     <Compile Include="Core\Utilities\DiscMananger.cs" />
     <Compile Include="Core\Utilities\HtmlResolver.cs" />
     <Compile Include="Core\Utilities\InsiderService.cs" />
+    <Compile Include="Core\Utilities\Logger.cs" />
     <Compile Include="Core\Utilities\QuoteService.cs" />
     <Compile Include="Core\Utilities\WebRequestRetriever.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CommonHelper.cs" />
     <Compile Include="Helpers\MenuItemHelper.cs" />
     <Compile Include="Models\EF\Context.cs" />
     <Compile Include="Models\EF\Transaction.cs" />
@@ -176,7 +178,9 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.0.2.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

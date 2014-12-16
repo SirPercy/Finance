@@ -10,7 +10,7 @@ namespace Finance.Repository
             List<Quote> GetInsiderList();
             List<InsiderInfo> GetInsiderDateList();
             void FindAndStoreTicker(IEnumerable<string> quotes, Dictionary<string, string> tickers);
-            void StoreInsiderInfo(IEnumerable<InsiderInfo> latestInsiderData, DateTime dateToGetData);
+            void StoreInsiderInfo(IEnumerable<InsiderInfo> latestInsiderData);
             Dictionary<string, Tuple<int, int>> FindStocksToBuyOrSell(int observableMonths, double observableAmount,
                                                                       DateTime forDate);
 
