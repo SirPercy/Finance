@@ -20,7 +20,13 @@ namespace Finance.Core.Jobs
         {
             try
             {
-                var latestPost = GetLatestInsiderPost();
+                //delete last 10 days though insider info can be reported within 10 days
+                DeleteLastPost();
+               
+                var latestPosts = GetLatestInsiderPost();
+                var latestPost = latestPosts.OrderByDescending(p => p.Date).FirstOrDefault();
+                
+
                 var dateFrom = latestPost != null ? latestPost.Date.AddDays(1) : DateTime.Now.AddDays(-150);
 
                 var daysToGet = (int) DateTime.Now.AddDays(-1).Subtract(dateFrom).TotalDays;
@@ -39,8 +45,18 @@ namespace Finance.Core.Jobs
 
 
         }
+        private void DeleteLastPost(int numberOfDaysToRemove = 10)
+        {
+            using (var db = new Models.EF.Context())
+            {
+                var dateFrom = DateTime.Now.AddDays(-numberOfDaysToRemove);
+                var itemsToDelete = db.InsiderInfo.Where(x => x.Date > dateFrom);
+                db.InsiderInfo.RemoveRange(itemsToDelete);
+                db.SaveChanges();
+            }
+        }
 
-        private InsiderInfo GetLatestInsiderPost()
+        private List<InsiderInfo> GetLatestInsiderPost()
         {
             var list = _repository.GetInsiderList();
             var insiderPosts = new List<InsiderInfo>();
@@ -48,7 +64,7 @@ namespace Finance.Core.Jobs
             foreach (var insiderInfo in list) {
                 insiderPosts.AddRange(insiderInfo.InsiderInfoList);
             }
-            return insiderPosts.OrderByDescending(p => p.Date).FirstOrDefault();
+            return insiderPosts;
         }
 
     }
