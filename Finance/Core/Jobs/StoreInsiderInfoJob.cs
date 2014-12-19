@@ -21,7 +21,8 @@ namespace Finance.Core.Jobs
             try
             {
                 //delete last 10 days though insider info can be reported within 10 days
-                DeleteLastPost();
+                if (!DeleteLastPost())
+                    return;
                
                 var latestPosts = GetLatestInsiderPost();
                 var latestPost = latestPosts.OrderByDescending(p => p.Date).FirstOrDefault();
@@ -42,18 +43,21 @@ namespace Finance.Core.Jobs
                 Logger.AddMessage("[ERROR] StoreInsiderInfoJob " + ex.InnerException);
 
             }
-
-
         }
-        private void DeleteLastPost(int numberOfDaysToRemove = 10)
+        private bool DeleteLastPost(int numberOfDaysToRemove = 10)
         {
-            using (var db = new Models.EF.Context())
+            try
             {
-                var dateFrom = DateTime.Now.AddDays(-numberOfDaysToRemove);
-                var itemsToDelete = db.InsiderInfo.Where(x => x.Date > dateFrom);
-                db.InsiderInfo.RemoveRange(itemsToDelete);
-                db.SaveChanges();
+                using (var db = new Models.EF.Context())
+                {
+                    var dateFrom = DateTime.Now.AddDays(-numberOfDaysToRemove);
+                    var itemsToDelete = db.InsiderInfo.Where(x => x.Date > dateFrom);
+                    db.InsiderInfo.RemoveRange(itemsToDelete);
+                    db.SaveChanges();
+                    return true;
+                }
             }
+            catch { return false; }
         }
 
         private List<InsiderInfo> GetLatestInsiderPost()

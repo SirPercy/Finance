@@ -36,20 +36,20 @@ namespace Finance
             var job = new JobDetailImpl("StoreInsiderInfoScheduler", typeof(Core.Jobs.StoreInsiderInfoJob));
             var trigger = TriggerBuilder.Create();
             //trigger.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(1));
-            trigger.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 9-10 * * ?")));
+            trigger.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 9 * * ?")));
             trigger.StartNow();
 
             var jobTwo = new JobDetailImpl("StoreActionScheduler", typeof(Core.Jobs.FindAndStoreActionJob));
             var triggerTwo = TriggerBuilder.Create();
             //triggerTwo.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(2));
-            triggerTwo.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 10-11 * * ?")));
+            triggerTwo.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 10 * * ?")));
             triggerTwo.StartNow();
 
 
             var jobThree = new JobDetailImpl("UpdatePortfolioScheduler", typeof(Core.Jobs.UpdatePortfolioJob));
             var triggerThree = TriggerBuilder.Create();
             //triggerThree.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(1));
-            triggerThree.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 17-18 * * ?")));
+            triggerThree.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 19 * * ?")));
             triggerThree.StartNow();
  
 
