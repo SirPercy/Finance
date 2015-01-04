@@ -8,6 +8,8 @@ using Quartz;
 
 namespace Finance.Core.Jobs
 {
+    [PersistJobDataAfterExecution]
+    [DisallowConcurrentExecution]
     public class StoreInsiderInfoJob : IJob
     {
         private readonly IRepository _repository;

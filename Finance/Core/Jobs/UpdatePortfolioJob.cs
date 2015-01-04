@@ -33,10 +33,16 @@ namespace Finance.Core.Jobs
                     if (price.Last == null)
                         continue;
                     var calcPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
-
-                    var entity = repository.Context.Portfolio.FirstOrDefault(i => i.Id.Equals(currentItem.Id));
-                    entity.CurrentPrice = calcPrice;
-                    repository.SaveChanges();
+                    if (item.BuyDate.AddMonths(3) < DateTime.Now)
+                    {
+                        AutomaticSell(item, calcPrice);
+                    }
+                    else
+                    {
+                        var entity = repository.Context.Portfolio.FirstOrDefault(i => i.Id.Equals(currentItem.Id));
+                        entity.CurrentPrice = calcPrice;
+                        repository.SaveChanges();
+                    }
                 }
                 Logger.AddMessage("[OK] Updateportfoliojob " + DateTime.Now);
             }
@@ -44,6 +50,20 @@ namespace Finance.Core.Jobs
             {
                 Logger.AddMessage("[ERROR] Updateportfoliojob " + ex.InnerException);
  
+            }
+        }
+
+        private void AutomaticSell(Finance.Models.EF.Portfolio item, double calcPrice)
+        {
+            if (item.BuyDate.AddMonths(3) < DateTime.Now)
+            {
+                var repository = new Repository.Repository();
+                repository.Context.Portfolio.Remove(item);
+                repository.SaveChanges();
+                repository.StoreTransaction(item.Stock, DateTime.Now, "Försäljning", item.BuyNumber, calcPrice,
+                                            (calcPrice * item.BuyNumber),
+                                            (calcPrice * item.BuyNumber) - 10000);
+
             }
         }
     }
