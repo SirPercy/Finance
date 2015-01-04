@@ -44,7 +44,7 @@ namespace Finance.Core.Jobs
 
             }
         }
-        private bool DeleteLastPost(int numberOfDaysToRemove = 10)
+        private bool DeleteLastPost(int numberOfDaysToRemove = 20)
         {
             try
             {
