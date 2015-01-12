@@ -42,6 +42,8 @@ namespace Finance.Repository
                         continue;
 
                     var date = insiderInfo.Date;
+                    if (date.DayOfWeek.Equals(DayOfWeek.Monday))
+                        date = DateTime.Now.AddDays(-4);
                     if (date.DayOfWeek.Equals(DayOfWeek.Sunday))
                         date = DateTime.Now.AddDays(-3);
                     if (date.DayOfWeek.Equals((DayOfWeek.Saturday)))
@@ -49,6 +51,8 @@ namespace Finance.Repository
 
 
                     var price = QuoteService.GetPrice(ticker.TickerName, date);
+                    if(price.Last == null)
+                        Logger.AddMessage("[ERROR] " + DateTime.Now + " Kan inte hämta kurs för " + info.CompanyName);
                     var number = Double.Parse(info.Number);
                     var lastPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
                     insiderInfo.Amount = (int)Math.Round(number * lastPrice);
