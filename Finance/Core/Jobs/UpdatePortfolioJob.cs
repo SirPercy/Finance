@@ -58,7 +58,9 @@ namespace Finance.Core.Jobs
             if (item.BuyDate.AddMonths(3) < DateTime.Now)
             {
                 var repository = new Repository.Repository();
-                repository.Context.Portfolio.Remove(item);
+                var portfolio = new Finance.Models.EF.Portfolio() { Id = item.Id };
+                repository.Context.Portfolio.Attach(item);
+                repository.Context.Portfolio.Remove(portfolio);
                 repository.SaveChanges();
                 repository.StoreTransaction(item.Stock, DateTime.Now, "Försäljning", item.BuyNumber, calcPrice,
                                             (calcPrice * item.BuyNumber),

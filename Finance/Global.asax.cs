@@ -49,7 +49,7 @@ namespace Finance
             var jobThree = new JobDetailImpl("UpdatePortfolioScheduler", typeof(Core.Jobs.UpdatePortfolioJob));
             var triggerThree = TriggerBuilder.Create();
             //triggerThree.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(1));
-            triggerThree.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 19 * * ?")));
+            triggerThree.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 18 * * ?")));
             triggerThree.StartNow();
  
 
