@@ -50,7 +50,7 @@ namespace Finance.Repository
                         date = DateTime.Now.AddDays(-2);
 
 
-                    var price = QuoteService.GetPrice(ticker.TickerName, date);
+                    var price = QuoteService.GetHistoricalPrice(ticker.TickerName, date);
                     if(price.Last == null)
                         Logger.AddMessage("[ERROR] " + DateTime.Now + " Kan inte hämta kurs för " + info.CompanyName);
                     var number = Double.Parse(info.Number);

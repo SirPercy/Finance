@@ -7,6 +7,8 @@ using Quartz;
 
 namespace Finance.Core.Jobs
 {
+    [PersistJobDataAfterExecution]
+    [DisallowConcurrentExecution]   
     public class UpdatePortfolioJob: IJob
     {
         public void Execute(IJobExecutionContext context)
@@ -23,13 +25,13 @@ namespace Finance.Core.Jobs
                     if (ticker == null)
                         continue;
 
-                    var date = DateTime.Now.AddDays(-1);
+                    var date = DateTime.Now;
                     if (date.DayOfWeek.Equals(DayOfWeek.Sunday))
                         date = DateTime.Now.AddDays(-3);
                     if (date.DayOfWeek.Equals((DayOfWeek.Saturday)))
                         date = DateTime.Now.AddDays(-2);
 
-                    var price = QuoteService.GetPrice(ticker.TickerName, date);
+                    var price = QuoteService.GetTodaysPrice(ticker.TickerName);
                     if (price.Last == null)
                         continue;
                     var calcPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);

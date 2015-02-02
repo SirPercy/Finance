@@ -8,7 +8,7 @@ namespace Finance.Core.Configuration
     public static class Constants
     {
         // symbol, month, day, year
-        public const string YahooUrl = "http://ichart.finance.yahoo.com/table.csv?s={0}&a={1}&b={2}&c={3}&d={4}&e={5}&f={6}";
+        public const string YahooUrl = "http://ichart.yahoo.com/table.csv?s={0}&a={1}&b={2}&c={3}&d={4}&e={5}&f={6}";
         //public const string FiUrl = "http://insynsok.fi.se/SearchPage.aspx?reporttype=0&culture=sv-SE&publdate={0}";
         public const string FiUrl =
             "http://insynsok.fi.se/SearchPage.aspx?reporttype=0&culture=sv-SE&fromdate={0}&tomdate={1}";

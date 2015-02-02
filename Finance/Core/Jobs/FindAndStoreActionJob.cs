@@ -8,6 +8,8 @@ using Quartz;
 
 namespace Finance.Core.Jobs
 {
+    [PersistJobDataAfterExecution]
+    [DisallowConcurrentExecution]   
     public class FindAndStoreActionJob : IJob
     {
         private const int DistinctByers = 4;
@@ -65,7 +67,7 @@ namespace Finance.Core.Jobs
                 //post in not one of the stocks in list to follow
                 if (ticker == null)
                     continue;
-                var price = QuoteService.GetPrice(ticker.TickerName, forDate);
+                var price = QuoteService.GetHistoricalPrice(ticker.TickerName, forDate);
                 if (price.Last == null)
                     continue;
 
@@ -94,6 +96,7 @@ namespace Finance.Core.Jobs
                     {
                         repository.Context.Portfolio.Remove(stockEntity);
                         repository.SaveChanges();
+                        var todaysPrice = Double.Parse(QuoteService.GetTodaysPrice(ticker.TickerName).Last, System.Globalization.CultureInfo.InvariantCulture);
                         repository.StoreTransaction(stock, forDate, "Försäljning", stockEntity.BuyNumber, calcPrice,
                                                     (calcPrice*stockEntity.BuyNumber),
                                                     (calcPrice*stockEntity.BuyNumber) - 10000);
