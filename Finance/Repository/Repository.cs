@@ -51,8 +51,11 @@ namespace Finance.Repository
 
 
                     var price = QuoteService.GetHistoricalPrice(ticker.TickerName, date);
-                    if(price.Last == null)
+                    if (price.Last == null)
+                    {                        
                         Logger.AddMessage("[ERROR] " + DateTime.Now + " Kan inte hämta kurs för " + info.CompanyName);
+                        continue;
+                    }
                     var number = Double.Parse(info.Number);
                     var lastPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
                     insiderInfo.Amount = (int)Math.Round(number * lastPrice);
