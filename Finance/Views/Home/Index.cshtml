@@ -1,4 +1,6 @@
 ﻿@model Finance.Models.ViewModels.HomeViewModel
+@using System.Threading
+@using System.Web.UI.WebControls
 @using Finance.Helpers
 @{
     ViewBag.Title = "Index";
@@ -28,36 +30,41 @@
                 <td class="right">@String.Format("{0:P2}.", ((@item.CurrentPrice * @item.BuyNumber)  - 10000) /10000)</td>
             </tr>
         }
-        <tr><td colspan="7" class="summary">Total avkastning: @Html.Roi(@Model.Portfolio)</td></tr>
+        <tr><td colspan="7" class="summary">Avkastning: @Html.Roi(@Model.Portfolio)</td></tr>
         
     </table>
 
 
     <h2>Transaktioner</h2>
     
-    <table class="table table-condensed table-striped table-transaction">
+<table class="table table-condensed table-striped table-transaction">
+    <tr>
+        <th>Datum</th>
+        <th>Trans.</th>
+        <th>Aktie</th>
+        <th class="right">Antal</th>
+        <th class="right">Pris</th>
+        <th class="right">Belopp</th>
+        <th class="right">Resultat</th>
+    </tr>
+    @foreach (var item in @Model.Transactions) {
         <tr>
-            <th>Datum</th>
-            <th>Trans.</th>
-            <th>Aktie</th>
-            <th class="right">Antal</th>
-            <th class="right">Pris</th>
-            <th class="right">Belopp</th>
-            <th class="right">Resultat</th>
+            <td>@item.Date.ToShortDateString()</td>
+            <td>@item.TransactionType</td>
+            <td>@item.Stock</td>
+            <td class="right">@Math.Round(item.Number) st</td>
+            <td class="right">@Math.Round(item.Price) kr</td>
+            <td class="right">@Math.Round(item.Amount) kr</td>
+            <td class="right">@Math.Round(item.Result) kr</td>
         </tr>
-        @foreach (var item in @Model.Transactions) {
-            <tr>
-                <td>@item.Date.ToShortDateString()</td>
-                <td>@item.TransactionType</td>
-                <td>@item.Stock</td>
-                <td class="right">@Math.Round(item.Number) st</td>
-                <td class="right">@Math.Round(item.Price) kr</td>
-                <td class="right">@Math.Round(item.Amount) kr</td>
-                <td class="right">@Math.Round(item.Result) kr</td>
-            </tr>
-        }
-        
-    </table>
-
-
-
+    }
+    <tr>
+        <td class="summary" colspan="7">Res avslutade affärer: 
+            @String.Format("{0:P2}", ((Model.Transactions.Sum(val => val.Result))/(Model.Transactions.Count(i => i.TransactionType.Equals("Försäljning"))*10000)))
+            (@Math.Round(Model.Transactions.Sum(val => val.Result)) kr)
+        </td>
+    </tr>
+</table>
+<p>Total avkastning portfölj och transaktioner: <strong>@Html.TotalRoi(@Model.Portfolio, @Model.Transactions)</strong></p>
+<p>Index under perioden: <strong>@Model.Index</strong></p>
+<br/><br/>

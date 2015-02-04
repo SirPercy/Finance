@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
+using System.Web.Caching;
 using Finance.Core.Utilities;
 using Finance.Models.EF;
 
@@ -158,6 +160,29 @@ namespace Finance.Repository
             return Context.InsiderInfo.ToList();
 
         }
+
+        public string GetIndex()
+        {
+            var retval = HttpContext.Current.Cache.Get("index") as string;
+            if (string.IsNullOrEmpty(retval))
+            {
+                var historPrices =
+                    QuoteService.GetHistoricalPrices("^OMXSPI", new DateTime(2014, 10, 24), DateTime.Now).ToList();
+                var last = historPrices.FirstOrDefault(p => p.Date.Contains(DateTime.Now.ToString("yyyy-MM")));
+                var start = historPrices.Last();
+                if (start.Last == null || last == null || last.Last == null)
+                    return "";
+                retval =  string.Format("{0:P2}",
+                    (double.Parse(last.Last, System.Globalization.CultureInfo.InvariantCulture) -
+                     double.Parse(start.Last, System.Globalization.CultureInfo.InvariantCulture))/
+                    double.Parse(start.Last, System.Globalization.CultureInfo.InvariantCulture));
+                HttpContext.Current.Cache.Insert("index", retval, null, DateTime.Now.AddHours(4), TimeSpan.Zero);
+            }
+            return retval;
+
+
+        }
+
 
         public void SaveChanges()
         {

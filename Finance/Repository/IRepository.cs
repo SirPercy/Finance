@@ -19,6 +19,7 @@ namespace Finance.Repository
             List<Ticker> GetTickers();
             void AddPostToPortfolio(Portfolio entity);
             void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount, double result);
+            string GetIndex();
         }
     
 }

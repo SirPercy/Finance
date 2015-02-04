@@ -23,7 +23,8 @@ namespace Finance.Controllers
             var model = new HomeViewModel
                             {
                                 Portfolio = _repository.GetPortfolio(),
-                                Transactions = _repository.GetTransactions()
+                                Transactions = _repository.GetTransactions(),
+                                Index = _repository.GetIndex()
                             };
             return View(model);
         }
