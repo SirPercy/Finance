@@ -88,6 +88,7 @@ namespace Finance.Core.Jobs
                                                           BuyAmount = 10000,
                                                           BuyNumber = number,
                                                           BuyDate = forDate,
+                                                          CurrentPrice = calcPrice
                                                       }
                         );
                 }
