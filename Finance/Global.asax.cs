@@ -36,7 +36,7 @@ namespace Finance
             var job = new JobDetailImpl("StoreInsiderInfoScheduler", typeof(Core.Jobs.StoreInsiderInfoJob));
             var trigger = TriggerBuilder.Create();
             //trigger.WithSchedule(SimpleScheduleBuilder.RepeatMinutelyForever(1));
-            trigger.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 0 9 * * ?")));
+            trigger.WithSchedule(CronScheduleBuilder.CronSchedule(new CronExpression("0 55 8 * * ?")));
             trigger.StartNow();
 
             var jobTwo = new JobDetailImpl("StoreActionScheduler", typeof(Core.Jobs.FindAndStoreActionJob));

@@ -24,19 +24,25 @@ namespace Finance.Helpers
 
         public static string TotalRoi(this HtmlHelper helper, IEnumerable<Models.EF.Portfolio> portfolio, IEnumerable<Models.EF.Transaction> transactions)
         {
-            double invested = 0;
-            double value = 0;
+            double startInvestMoney = 60000;
+            double saldo = startInvestMoney;
+            double portfolioresult = 0;
             foreach (var stock in portfolio)
             {
-                value = value + stock.CurrentPrice * stock.BuyNumber;
-                invested = invested + 10000;
+                portfolioresult = portfolioresult + (stock.CurrentPrice * stock.BuyNumber);
             }
-            foreach (var transaction in transactions.Where(tr => tr.TransactionType.Equals("Försäljning")))
+            foreach (var transaction in transactions.OrderBy(i => i.Date))
             {
-                value = value + transaction.Amount;
-                invested = invested + 10000;
+                if (transaction.TransactionType.Equals("Försäljning"))
+                {
+                    saldo = saldo + transaction.Amount;
+                }
+                else
+                {
+                    saldo = saldo - transaction.Amount;
+                }
             }
-            return string.Format("{0:P2}", (value - invested) / invested);
+            return string.Format("{0:P2}", ((saldo + portfolioresult)-startInvestMoney)/ startInvestMoney);
         }
     }
 }
