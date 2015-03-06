@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web;
 using Finance.Core.Utilities;
 using System.Linq;
 using Finance.Models.EF;
@@ -38,6 +39,7 @@ namespace Finance.Core.Jobs
 
                 var latestInsiderData = InsiderService.Get(dateFrom);
                 _repository.StoreInsiderInfo(latestInsiderData);
+                HttpRuntime.Cache.Remove("insider");
                 Logger.AddMessage("[OK] StoreInsiderInfoJob " + DateTime.Now);
  
             }

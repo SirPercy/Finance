@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Caching;
 using System.Web.Mvc;
 using Finance.Core.Jobs;
@@ -26,7 +27,7 @@ namespace Finance.Controllers
             if (list == null)
             {
                 list = _repository.GetInsiderList();
-                HttpContext.Cache.Insert("insider", list, null, DateTime.Now.AddHours(1), TimeSpan.Zero);
+                HttpRuntime.Cache.Insert("insider", list, null, DateTime.Now.AddHours(1), TimeSpan.Zero);
             }
                 var listByDate = new List<InsiderInfo>();
                 if (Request.QueryString["show"] == "date")
