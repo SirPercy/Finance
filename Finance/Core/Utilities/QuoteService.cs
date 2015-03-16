@@ -96,7 +96,9 @@ namespace Finance.Core.Utilities
         {
             try
             {
-                var webreq = (HttpWebRequest)WebRequest.Create(string.Format("http://finance.yahoo.com/d/quotes.csv?s={0}&f=k1", symbol));
+                //realtime not working -- var webreq = (HttpWebRequest)WebRequest.Create(string.Format("http://finance.yahoo.com/d/quotes.csv?s={0}&f=k1", symbol));
+                var webreq = (HttpWebRequest)WebRequest.Create(string.Format("http://finance.yahoo.com/d/quotes.csv?s={0}&f=l1", symbol));
+           
                 var webresp = (HttpWebResponse)webreq.GetResponse();
 
                 using (var reader = new StreamReader(webresp.GetResponseStream(), Encoding.ASCII))
@@ -104,7 +106,8 @@ namespace Finance.Core.Utilities
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
-                        var result =  GetStrBetweenTags(line, "<b>", "</b>");
+                        //realtime not woring ---var result =  GetStrBetweenTags(line, "<b>", "</b>");
+                        var result = line;
                         if (!string.IsNullOrWhiteSpace(result))
                         {
                             return new QuoteInfo
