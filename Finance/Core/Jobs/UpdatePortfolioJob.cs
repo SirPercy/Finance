@@ -17,7 +17,7 @@ namespace Finance.Core.Jobs
             {
                 var repository = new Repository.Repository();
                 var portfolio = repository.GetPortfolio();
-                foreach (var item in portfolio)
+                foreach (var item in portfolio.Result)
                 {
                     var currentItem = item;
                     var ticker = repository.GetTickers().FirstOrDefault(t => t.FullName.Equals(currentItem.Stock));

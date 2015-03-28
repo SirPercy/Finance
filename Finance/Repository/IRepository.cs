@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Finance.Models.EF;
 
 
@@ -14,8 +15,8 @@ namespace Finance.Repository
             Dictionary<string, Tuple<int, int>> FindStocksToBuyOrSell(int observableMonths, double observableAmount,
                                                                       DateTime forDate);
 
-            List<Portfolio> GetPortfolio();
-            List<Transaction> GetTransactions();
+            Task<List<Portfolio>> GetPortfolio();
+            Task<List<Transaction>> GetTransactions();
             List<Ticker> GetTickers();
             void AddPostToPortfolio(Portfolio entity);
             void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount, double result);

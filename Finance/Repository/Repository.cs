@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
-using System.Web.Caching;
 using Finance.Core.Utilities;
 using Finance.Models.EF;
 
@@ -117,14 +118,20 @@ namespace Finance.Repository
             return buyOrSellDict;
         }
 
-        public List<Portfolio> GetPortfolio()
+        public async Task<List<Portfolio>> GetPortfolio()
         {
-            return Context.Portfolio.ToList();
+            using (var context = new Context())
+            {
+                return await (from p in context.Portfolio select p).ToListAsync();
+            }
         }
 
-        public List<Transaction> GetTransactions()
+        public async Task<List<Transaction>> GetTransactions()
         {
-            return Context.Transactions.ToList();
+            using (var context = new Context())
+            {
+                return await (from t in context.Transactions select t).ToListAsync();
+            }   
         }
         public void StoreTransaction(string stock, DateTime date, string transactionType, double number, double price, double amount, double result)
         {
@@ -163,7 +170,7 @@ namespace Finance.Repository
 
         public string GetIndex()
         {
-            var retval = HttpContext.Current.Cache.Get("index") as string;
+            var retval = HttpRuntime.Cache.Get("index") as string;
             if (string.IsNullOrEmpty(retval))
             {
                 var historPrices =
@@ -176,7 +183,7 @@ namespace Finance.Repository
                     (double.Parse(last.Last, System.Globalization.CultureInfo.InvariantCulture) -
                      double.Parse(start.Last, System.Globalization.CultureInfo.InvariantCulture))/
                     double.Parse(start.Last, System.Globalization.CultureInfo.InvariantCulture));
-                HttpContext.Current.Cache.Insert("index", retval, null, DateTime.Now.AddHours(4), TimeSpan.Zero);
+                HttpRuntime.Cache.Insert("index", retval, null, DateTime.Now.AddHours(4), TimeSpan.Zero);
             }
             return retval;
 

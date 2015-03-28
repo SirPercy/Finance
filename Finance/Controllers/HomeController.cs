@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Finance.Core.Jobs;
 using Finance.Models.EF;
@@ -9,7 +10,7 @@ namespace Finance.Controllers
 {
     public class HomeController : Controller
     {
-        IRepository _repository;
+        readonly IRepository _repository;
         public HomeController()
         {
             _repository = new Repository.Repository();
@@ -17,14 +18,18 @@ namespace Finance.Controllers
 
 
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            var portfolio = _repository.GetPortfolio();
+            var transactions = _repository.GetTransactions();
+            var index = Task.Factory.StartNew(() => _repository.GetIndex());
+            await Task.WhenAll(portfolio, transactions, index);
 
             var model = new HomeViewModel
                             {
-                                Portfolio = _repository.GetPortfolio(),
-                                Transactions = _repository.GetTransactions(),
-                                Index = _repository.GetIndex()
+                                Portfolio = portfolio.Result,
+                                Transactions = transactions.Result,
+                                Index = index.Result
                             };
             return View(model);
         }

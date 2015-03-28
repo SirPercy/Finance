@@ -20,7 +20,7 @@ namespace Finance.Core.Jobs
         public void Execute(IJobExecutionContext context) {
             try
             {
-                var portfolio = new Repository.Repository().GetPortfolio();
+                var portfolio = new Repository.Repository().GetPortfolio().Result;
                 if (!portfolio.Any())
                 {
                     for (int i = 45; i > 0; i--)
@@ -62,7 +62,7 @@ namespace Finance.Core.Jobs
                 var isSell = (item.Value.Item2 - item.Value.Item1) >= DistinctSelles;
 
                 var repository = new Repository.Repository();
-                var stockEntity = repository.GetPortfolio().FirstOrDefault(s => s.Stock.Equals(stock));
+                var stockEntity = repository.GetPortfolio().Result.FirstOrDefault(s => s.Stock.Equals(stock));
                 var ticker = repository.GetTickers().FirstOrDefault(t => t.FullName.Equals(stock));
                 //post in not one of the stocks in list to follow
                 if (ticker == null)
