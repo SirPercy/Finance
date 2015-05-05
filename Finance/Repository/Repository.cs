@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Finance.Core.Utilities;
 using Finance.Models.EF;
+using Finance.Models.Entities;
 
 namespace Finance.Repository
 {
@@ -168,22 +169,23 @@ namespace Finance.Repository
 
         }
 
-        public string GetIndex()
+        public async Task<string> GetIndex()
         {
             var retval = HttpRuntime.Cache.Get("index") as string;
             if (string.IsNullOrEmpty(retval))
             {
-                var historPrices =
-                    QuoteService.GetHistoricalPrices("^OMXSPI", new DateTime(2014, 10, 24), DateTime.Now).ToList();
-                var last = historPrices.FirstOrDefault(p => p.Date.Contains(DateTime.Now.ToString("yyyy-MM")));
-                var start = historPrices.Last();
+                var historPrices = await QuoteService.GetHistoricalPrices("^OMXSPI", new DateTime(2014, 10, 24), DateTime.Now);
+
+                var quoteInfos = historPrices as QuoteInfo[] ?? historPrices.ToArray();
+                var last = quoteInfos.FirstOrDefault(p => p.Date.Contains(DateTime.Now.ToString("yyyy-MM")));
+                var start = quoteInfos.Last();
                 if (start.Last == null || last == null || last.Last == null)
                     return "";
                 retval =  string.Format("{0:P2}",
                     (double.Parse(last.Last, System.Globalization.CultureInfo.InvariantCulture) -
                      double.Parse(start.Last, System.Globalization.CultureInfo.InvariantCulture))/
                     double.Parse(start.Last, System.Globalization.CultureInfo.InvariantCulture));
-                HttpRuntime.Cache.Insert("index", retval, null, DateTime.Now.AddHours(4), TimeSpan.Zero);
+                HttpRuntime.Cache.Insert("index", retval, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero);
             }
             return retval;
 

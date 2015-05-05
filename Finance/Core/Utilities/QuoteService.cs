@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Finance.Core.Configuration;
 using Finance.Models.Entities;
 
@@ -51,23 +52,24 @@ namespace Finance.Core.Utilities
             return new QuoteInfo();
         }
 
-        public static IEnumerable<QuoteInfo> GetHistoricalPrices(string symbol, DateTime fromDate, DateTime toDate)
+        public static async Task<IEnumerable<QuoteInfo>> GetHistoricalPrices(string symbol, DateTime fromDate, DateTime toDate)
         {
             var quoteInfoList = new List<QuoteInfo>();
             try
             {
-                var webreq = (HttpWebRequest)WebRequest.Create(string.Format(Constants.YahooMonthUrl, symbol, (fromDate.Month - 1), fromDate.Day, fromDate.Year, (toDate.Month - 1), toDate.Day, toDate.Year));
-                var webresp = (HttpWebResponse)webreq.GetResponse();
-
-                using (var reader = new StreamReader(webresp.GetResponseStream(), Encoding.ASCII))
+                var url = string.Format(Constants.YahooMonthUrl, symbol, (fromDate.Month - 1), fromDate.Day,
+                    fromDate.Year, (toDate.Month - 1), toDate.Day, toDate.Year);
+                
+                using (var client = new WebClient())
                 {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
+                    var retVal = await client.OpenReadTaskAsync(new Uri(url));
+                    using (var reader = new StreamReader(retVal))
                     {
-                        if (line.StartsWith("Date"))
-                            continue;
-                        else
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
                         {
+                            if (line.StartsWith("Date"))
+                                continue;
                             var content = line.Replace("\"", "");
                             var contents = content.Split(',');
                             quoteInfoList.Add(new QuoteInfo
@@ -77,14 +79,9 @@ namespace Finance.Core.Utilities
                                 Last = contents.Length > 1 ? contents[4] : "",
                                 Date = contents.Length > 2 ? contents[0] : "",
                             });
-                            
                         }
-
                     }
-
-
                 }
-
             }
             catch (Exception)
             {

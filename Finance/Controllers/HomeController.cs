@@ -22,7 +22,7 @@ namespace Finance.Controllers
         {
             var portfolio = _repository.GetPortfolio();
             var transactions = _repository.GetTransactions();
-            var index = Task.Factory.StartNew(() => _repository.GetIndex());
+            var index = _repository.GetIndex();
             await Task.WhenAll(portfolio, transactions, index);
 
             var model = new HomeViewModel
