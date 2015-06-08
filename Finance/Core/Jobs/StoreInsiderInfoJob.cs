@@ -37,7 +37,8 @@ namespace Finance.Core.Jobs
                 if (daysToGet < 1)
                     return;
 
-                var latestInsiderData = InsiderService.Get(dateFrom);
+                var dateTo = daysToGet > 30 ? DateTime.Now.AddDays(-(daysToGet - 30)) : DateTime.Now.AddDays(-1);
+                var latestInsiderData = new InsiderService().Get(dateFrom, dateTo);
                 _repository.StoreInsiderInfo(latestInsiderData);
                 HttpRuntime.Cache.Remove("insider");
                 Logger.AddMessage("[OK] StoreInsiderInfoJob " + DateTime.Now);

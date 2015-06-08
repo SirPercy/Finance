@@ -15,7 +15,7 @@ namespace Finance.Core.Configuration
         public const string FiUrl =
             "http://insynsok.fi.se/SearchPage.aspx?reporttype=0&culture=sv-SE&fromdate={0}&tomdate={1}";
 
-
+        public const string AvanzaUrl = "https://www.avanza.se/aktier/insiderhandel.html/{0}/{1}?sida={2}";
 
         public static Dictionary<string, string> Ticker = new Dictionary<string, string>
                                                              {

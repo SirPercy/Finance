@@ -85,31 +85,47 @@ namespace Finance.Repository
             {
                 var lastBuysAndSells =
                     quote.InsiderInfoList.Where(i => i.Date > forDate.AddMonths(-observableMonths) && i.Date <= forDate).ToList();
-                var personDict = new Dictionary<string, int>();
+                //var personDict = new Dictionary<string, int>();
+
+                var buys = new List<InsiderInfo>();
+                var sells = new List<InsiderInfo>();
                 foreach (var lastBuysAndSell in lastBuysAndSells)
                 {
-                    var key = lastBuysAndSell.Person + "|" + lastBuysAndSell.Position;
-                    if (lastBuysAndSell.Amount < observableAmount && lastBuysAndSell.Amount > -observableAmount)
-                        continue;
+                    var containsSameDate = buys.Any(i => i.Date.Equals(lastBuysAndSell.Date));
+                    var containsSamePerson = buys.Any(i => i.Person.Equals(lastBuysAndSell.Person));
+                    if (lastBuysAndSell.Transaction.Equals("Köp") &&
+                        !containsSameDate && !containsSamePerson &&
+                        !lastBuysAndSells.Any(i => i.Person.Equals(lastBuysAndSell.Person) && i.Transaction.Equals("Försäljning")))
+                    {
+                        buys.Add(lastBuysAndSell);
+                    }
+                    else if (lastBuysAndSell.Transaction.Equals("Försäljning") &&
+                             !sells.Any(i => i.Person.Equals(lastBuysAndSell.Person)))
+                    {
+                        sells.Add(lastBuysAndSell);
+                    }
 
-                    if (personDict.ContainsKey(key))
-                    {
-                        if (lastBuysAndSell.Transaction.Equals("Köp"))
-                            personDict[key]++;
-                        else
-                            personDict[key]--;
-                    }
-                    else
-                    {
-                        personDict.Add(key, lastBuysAndSell.Transaction.Equals("Köp") ? 1 : -1);
-                    }
+                    //var key = lastBuysAndSell.Person + "|" + lastBuysAndSell.Position;
+                    //if (lastBuysAndSell.Amount < observableAmount && lastBuysAndSell.Amount > -observableAmount)
+                    //    continue;
+
+                    //if (personDict.ContainsKey(key))
+                    //{
+                    //    if (lastBuysAndSell.Transaction.Equals("Köp"))
+                    //        personDict[key]++;
+                    //    else
+                    //        personDict[key]--;
+                    //}
+                    //else
+                    //{
+                    //    personDict.Add(key, lastBuysAndSell.Transaction.Equals("Köp") ? 1 : -1);
+                    //}
                 }
-                var noOfBuys = personDict.Count(i => i.Value > 0);
-                var noOfSells = personDict.Count(i => i.Value < 0);
+                var noOfBuys = buys.Count();
+                var noOfSells = sells.Count();
                 //if last three is sell increase sell to trigger
-                if(lastBuysAndSells.Count > 2 && lastBuysAndSells[lastBuysAndSells.Count - 1].Transaction.Equals("Försäljning") &&
-                   lastBuysAndSells[lastBuysAndSells.Count - 2].Transaction.Equals("Försäljning") &&
-                   lastBuysAndSells[lastBuysAndSells.Count - 3].Transaction.Equals("Försäljning"))
+                if(lastBuysAndSells.Count > 1 && lastBuysAndSells[lastBuysAndSells.Count - 1].Transaction.Equals("Försäljning") &&
+                   lastBuysAndSells[lastBuysAndSells.Count - 2].Transaction.Equals("Försäljning"))
                 {
                     noOfSells = 99;
                 }

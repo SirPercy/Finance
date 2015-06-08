@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Finance.Models.EF.InsiderInfo>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Insiderlista</h2>
+
+
+<table>
+    ´<thead>
+         <tr>
+             <th>Bolag</th>
+             <th>Insider</th>
+             <th>Händelse</th>
+             <th>Datum</th>
+         </tr>
+     </thead>
+    <tbody>
+        @foreach (var item in @Model)
+        {
+            <tr>
+                <td>@item.CompanyName</td>
+                <td>@item.Person<br/>@item.Position</td>
+                <td>@item.Transaction<br/>@item.Type</td>
+                <td>@item.Date.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

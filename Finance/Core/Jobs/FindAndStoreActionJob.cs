@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using Finance.Core.Utilities;
 using Finance.Models.EF;
@@ -13,8 +12,8 @@ namespace Finance.Core.Jobs
     public class FindAndStoreActionJob : IJob
     {
         private const int DistinctByers = 4;
-        private const int DistinctSelles = 3;
-        private const double ObservableAmount = 30000;
+        private const int DistinctSelles = 0;
+        private const double ObservableAmount = 54999;
         private const int ObservableMonths = 2;
 
         public void Execute(IJobExecutionContext context) {
@@ -58,8 +57,9 @@ namespace Finance.Core.Jobs
         private static void UpdatePortfolio(Dictionary<string, Tuple<int, int>> buyOrSellInfo, DateTime forDate) {
             foreach (var item in buyOrSellInfo) {
                 var stock = item.Key;
-                var isBuy = (item.Value.Item1 - item.Value.Item2) >= DistinctByers;
-                var isSell = (item.Value.Item2 - item.Value.Item1) >= DistinctSelles;
+                var isSell = (item.Value.Item2 > DistinctSelles);
+                var isBuy = (item.Value.Item1 >= DistinctByers) && !isSell;
+
 
                 var repository = new Repository.Repository();
                 var stockEntity = repository.GetPortfolio().Result.FirstOrDefault(s => s.Stock.Equals(stock));
@@ -72,7 +72,7 @@ namespace Finance.Core.Jobs
                     continue;
 
                 var addBuyToPortfolio = (stockEntity == null && isBuy);
-                var addSellToPortfolio = stockEntity != null && isSell && !isBuy;
+                var addSellToPortfolio = stockEntity != null && isSell;
                 var calcPrice = Double.Parse(price.Last, System.Globalization.CultureInfo.InvariantCulture);
                 var number = 10000 / Double.Parse(price.Last,
                                                    System.Globalization.CultureInfo.

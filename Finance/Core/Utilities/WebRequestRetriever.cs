@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace Finance.Core.Utilities
@@ -25,6 +27,15 @@ namespace Finance.Core.Utilities
                 }
             }
 
+        }
+
+        public async Task<string> GetAsync(Uri uri)
+        {
+            using (var client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                return await client.DownloadStringTaskAsync(uri);
+            }
         }
     }
 }

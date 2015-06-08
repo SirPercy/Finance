@@ -60,8 +60,8 @@
     }
     <tr>
         <td class="summary" colspan="7">Res avslutade affärer: 
-            @String.Format("{0:P2}", ((Model.Transactions.Sum(val => val.Result))/(Model.Transactions.Count(i => i.TransactionType.Equals("Försäljning"))*10000)))
-            (@Math.Round(Model.Transactions.Sum(val => val.Result)) kr)
+            @*@String.Format("{0:P2}", ((Model.Transactions.Sum(val => val.Result))/(Model.Transactions.Count(i => i.TransactionType.Equals("Försäljning"))*10000)))*@
+            @Math.Round(Model.Transactions.Sum(val => val.Result)) kr
         </td>
     </tr>
 </table>
