@@ -95,10 +95,11 @@ namespace Finance.Core.Jobs
                 else if (addSellToPortfolio) {
                     if (forDate > stockEntity.BuyDate)
                     {
-                        repository.Context.Portfolio.Remove(stockEntity);
+                        var entity = repository.Context.Portfolio.First(i => i.Id.Equals(stockEntity.Id));
+                        repository.Context.Portfolio.Remove(entity);
                         repository.SaveChanges();
                         var todaysPrice = Double.Parse(QuoteService.GetTodaysPrice(ticker.TickerName).Last, System.Globalization.CultureInfo.InvariantCulture);
-                        repository.StoreTransaction(stock, forDate, "Försäljning", stockEntity.BuyNumber, calcPrice,
+                        repository.StoreTransaction(stock, forDate, "Försäljning", stockEntity.BuyNumber, todaysPrice,
                                                     (calcPrice*stockEntity.BuyNumber),
                                                     (calcPrice*stockEntity.BuyNumber) - 10000);
                     }
