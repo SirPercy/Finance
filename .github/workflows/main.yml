@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - master
+env:
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
   lhci:
     name: Lighthouse
